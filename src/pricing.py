@@ -25,3 +25,15 @@ def price_asian_call(S0, K, r, sigma, T, N, M):
         payoffs[i] = np.maximum(avg_price - K, 0)      # Asian call payoff
     discounted = np.exp(-r * T) * np.mean(payoffs)    # Average payoff
     return discounted
+
+def price_european_call_antithetic(S0, K, r, sigma, T, M):
+    payoffs = np.zeros(M)
+    for i in range(M):
+        Z = np.random.normal()
+        ST_plus = S0 * np.exp((r - 0.5 * sigma**2) * T + sigma * np.sqrt(T) * Z)
+        ST_minus = S0 * np.exp((r - 0.5 * sigma**2) * T - sigma * np.sqrt(T) * Z)
+        payoff_plus = np.maximum(ST_plus - K, 0)
+        payoff_minus = np.maximum(ST_minus - K, 0)
+        payoffs[i] = 0.5 * (payoff_plus + payoff_minus)
+    discounted = np.exp(-r * T) * np.mean(payoffs)
+    return discounted
