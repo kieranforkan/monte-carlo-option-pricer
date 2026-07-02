@@ -37,3 +37,37 @@ def price_european_call_antithetic(S0, K, r, sigma, T, M):
         payoffs[i] = 0.5 * (payoff_plus + payoff_minus)
     discounted = np.exp(-r * T) * np.mean(payoffs)
     return discounted
+
+def bs_delta_call(S0, K, r, sigma, T):
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    delta = norm.cdf(d1)
+    return delta
+
+def fd_delta_call(S0, K, r, sigma, T, h=0.01):
+    price_up = black_scholes_call(S0 + h, K, r, sigma, T)
+    price_down = black_scholes_call(S0 - h, K, r, sigma, T)
+    delta = (price_up - price_down) / (2 * h)
+    return delta
+
+def bs_vega_call(S0, K, r, sigma, T):
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    vega = S0 * norm.pdf(d1) * np.sqrt(T)
+    return vega
+
+def bs_gamma_call(S0, K, r, sigma, T):
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    gamma = norm.pdf(d1) / (S0 * sigma * np.sqrt(T))
+    return gamma
+
+def bs_theta_call(S0, K, r, sigma, T):
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    theta = (-S0 * norm.pdf(d1) * sigma / (2 * np.sqrt(T))
+             - r * K * np.exp(-r * T) * norm.cdf(d2))
+    return theta
+
+def bs_rho_call(S0, K, r, sigma, T):
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    rho = K * T * np.exp(-r * T) * norm.cdf(d2)
+    return rho
