@@ -1,6 +1,7 @@
 import numpy as np
 from src.simulation import simulate_gbm
 from scipy.stats import norm
+from scipy.optimize import brentq
 
 def price_european_call(S0, K, r, sigma, T, N, M):
     payoffs = np.zeros(M)          # One payoff per simulated path
@@ -71,3 +72,9 @@ def bs_rho_call(S0, K, r, sigma, T):
     d2 = d1 - sigma * np.sqrt(T)
     rho = K * T * np.exp(-r * T) * norm.cdf(d2)
     return rho
+
+def implied_vol_call(market_price, S0, K, r, T):
+    def objective(sigma):
+        return black_scholes_call(S0, K, r, sigma, T) - market_price
+    return brentq(objective, 0.001, 5.0) # Search for sigma in a reasonable range
+   
