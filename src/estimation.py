@@ -39,7 +39,7 @@ def estimate_ou(X, dt):
         return -ll   # negative because we minimise
 
     # initial guess, then optimise
-    guess = [1.0, np.mean(X), np.std(np,diff(X)) / np.sqrt(dt)]
+    guess = [1.0, np.mean(X), np.std(np.diff(X)) / np.sqrt(dt)]
     bounds = [(1e-5, None), (None, None), (1e-6, None)] # theta > 0, sigma > 0, mu free
     result = minimize(neg_log_likelihood, guess, method="L-BFGS-B")
     theta_hat, mu_hat, sigma_hat = result.x
